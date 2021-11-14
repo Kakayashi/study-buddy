@@ -1,15 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ReactComponent as DeleteIcon } from 'assets/icons/delete-icon.svg';
+import Button from 'components/atoms/Button/Button';
+import { Wrapper, Average, Info } from './UsersListItem.style';
 
 const UsersListItem = ({ userData: { average, name, attendance = '0%' } }) => (
-  <li>
-    <div>{average}</div>
+  <Wrapper>
+    <Average average={average}>{average}</Average>
     <div>
-      <p>{name}</p>
-      <p>{attendance}</p>
+      <Info>
+        <p>{name}</p>
+        <p>{attendance}</p>
+      </Info>
     </div>
-    <button>X</button>
-  </li>
+    <Button></Button>
+  </Wrapper>
 );
 
 UsersListItem.propTypes = {

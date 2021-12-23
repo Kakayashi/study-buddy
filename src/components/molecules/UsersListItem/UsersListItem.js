@@ -4,7 +4,7 @@ import { ReactComponent as DeleteIcon } from 'assets/icons/delete-icon.svg';
 import Button from 'components/atoms/Button/Button';
 import { Wrapper, Average, Info } from './UsersListItem.style';
 
-const UsersListItem = ({ userData: { average, name, attendance = '0%' } }) => (
+const UsersListItem = ({ deleteUser, userData: { average, name, attendance = '0%' } }) => (
   <Wrapper>
     <Average average={average}>{average}</Average>
     <div>
@@ -13,7 +13,7 @@ const UsersListItem = ({ userData: { average, name, attendance = '0%' } }) => (
         <p>{attendance}</p>
       </Info>
     </div>
-    <Button></Button>
+    <Button onClick={() => deleteUser(name)}></Button>
   </Wrapper>
 );
 

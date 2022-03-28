@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import UsersList from 'components/organism/UsersList/UsersList';
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyle } from 'assets/styles/globalStyle';
 import { theme } from 'assets/styles/theme';
-import { Wrapper, NavLeft, Container, Text, Spa } from './Root.styles.js';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import Form from 'components/organism/Form/Form';
+import { Wrapper } from './Root.styles';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { users as usersData } from 'data/users';
-import Navbar from 'components/organism/Navbar/Navbar.js';
+import MainTemplate from 'components/templates/MainTemplate/MainTemplate';
+import AddUser from 'views/AddUser';
+import Dashboard from 'views/Dashboard';
 
 const initialFormState = {
   name: '',
@@ -48,29 +48,18 @@ const Root = () => {
     <Router>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Navbar></Navbar>
-        <Container>
-          <NavLeft>
-            <Spa></Spa>
-            <Text>
-              <Link to="/">Home</Link>
-            </Text>
-            <Text>
-              <Link to="/add-user">Add user</Link>
-            </Text>
-            <Text>Another</Text>
-          </NavLeft>
+        <MainTemplate>
           <Wrapper>
             <Switch>
               <Route path="/add-user">
-                <Form formValues={formValues} handleAddUser={handleAddUser} handleInputChange={handleInputChange} />
+                <AddUser formValues={formValues} handleAddUser={handleAddUser} handleInputChange={handleInputChange} />
               </Route>
               <Route path="/">
-                <UsersList deleteUser={deleteUser} users={users} />
+                <Dashboard deleteUser={deleteUser} users={users} />
               </Route>
             </Switch>
           </Wrapper>
-        </Container>
+        </MainTemplate>
       </ThemeProvider>
     </Router>
   );

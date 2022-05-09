@@ -1,33 +1,23 @@
-import React, { useState, useEffect } from 'react';
 import { Input } from 'components/atoms/Input/Input';
-import { SearchBarWrapper, StatusInfo, SearchFild } from './SearchBar.styles';
-import axios from 'axios';
+import React, { useState } from 'react';
+import debounce from 'lodash.debounce';
+import { useCombobox } from 'downshift';
+import { SearchBarWrapper, SearchResults, SearchResultsItem, SearchWrapper, StatusInfo } from 'components/organisms/SearchBar/SearchBar.styles';
+import { useStudents } from 'hooks/useStudents';
 
 export const SearchBar = () => {
-  const [students, setStudents] = useState([]);
-  const [machingstudents, setMachingStudents] = useState([]);
-  const [inputValue, setInputValue] = useState([]);
+  const [matchingStudents, setMatchingStudents] = useState([]);
+  const { findStudents } = useStudents();
 
-  useEffect(() => {
-    axios
-      .get(`/students`)
-      .then(({ data }) => setStudents(data.students))
-      //.then(({ data }) => console.log(data))
-      .catch((err) => console.log(err));
-  }, []);
+  const getMatchingStudents = debounce(async ({ inputValue }) => {
+    const { students } = await findStudents(inputValue);
+    setMatchingStudents(students);
+  }, 500);
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
-
-  useEffect(() => {
-    let titles;
-    titles = students.map((e) => e.name);
-    titles = titles.filter((e) => e.match(inputValue));
-    setMachingStudents(titles);
-    console.log(machingstudents.length);
-    console.log(inputValue);
-  }, [inputValue]);
+  const { isOpen, getMenuProps, getInputProps, getComboboxProps, highlightedIndex, getItemProps } = useCombobox({
+    items: matchingStudents,
+    onInputValueChange: getMatchingStudents,
+  });
 
   return (
     <SearchBarWrapper>
@@ -37,12 +27,17 @@ export const SearchBar = () => {
           <strong>Teacher</strong>
         </p>
       </StatusInfo>
-
-      <SearchFild>
-        <Input value={inputValue} onChange={handleInputChange} />
-        {machingstudents.length < 6 ? machingstudents.map((e) => <Input key={e} readOnly value={e}></Input>) : ''}
-      </SearchFild>
+      <SearchWrapper {...getComboboxProps()}>
+        <Input {...getInputProps()} name="Search" id="Search" placeholder="Search" />
+        <SearchResults isVisible={isOpen && matchingStudents.length > 0} {...getMenuProps()}>
+          {isOpen &&
+            matchingStudents.map((item, index) => (
+              <SearchResultsItem isHighlighted={highlightedIndex === index} {...getItemProps({ item, index })} key={item.id}>
+                {item.name}
+              </SearchResultsItem>
+            ))}
+        </SearchResults>
+      </SearchWrapper>
     </SearchBarWrapper>
   );
 };
-export default SearchBar;

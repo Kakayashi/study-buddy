@@ -1,58 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { ViewWrapper } from 'components/molecules/ViewWrapper/ViewWrapper';
-import UsersList from 'components/organisms/UsersList/UsersList';
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import { Redirect, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import StudentsList from 'components/organisms/StudentsList/StudentsList';
+import { useStudents } from 'hooks/useStudents';
+import { GroupWrapper, TitleWrapper, Wrapper } from 'views/Dashboard.styles';
 import { Title } from 'components/atoms/Title/Title';
-import { DashboardWrapper, DashboardNav, DashNav } from './Dashboard.style';
-import { Button } from 'components/atoms/Button/Button';
 
 const Dashboard = () => {
-  const [students, setStudents] = useState([]);
   const [groups, setGroups] = useState([]);
-  const [menuVisible, setMenuVisible] = useState(false);
+  const { getGroups } = useStudents();
   const { id } = useParams();
 
   useEffect(() => {
-    axios
-      .get('/groups')
-      .then(({ data }) => setGroups(data.groups))
-      .catch((err) => console.log(err));
-  }, []);
+    (async () => {
+      const groups = await getGroups();
+      setGroups(groups);
+    })();
+  }, [getGroups]);
 
-  useEffect(() => {
-    axios
-      .get(`/students/${id || groups[0]}`)
-      .then(({ data }) => setStudents(data.students))
-      //.then(({ data }) => console.log(data))
-      .catch((err) => console.log(err));
-  }, [id, groups]);
-
-  const ToogleChange = () => {
-    menuVisible ? setMenuVisible(false) : setMenuVisible(true);
-    console.log(menuVisible);
-  };
+  if (!id && groups.length > 0) return <Redirect to={`/group/${groups[0]}`} />;
 
   return (
-    <DashboardWrapper>
-      <DashboardNav>
-        <Title>Grupa {id || groups[0]}</Title>
-        <Button onClick={ToogleChange}>Change group </Button>
-        <DashNav Visible={menuVisible} onClick={ToogleChange}>
-          <nav>
-            {groups.map((group) => (
-              <Link key={group} to={`/group/${group}`}>
-                {/* <GroupButton>{group}</GroupButton> */}
-                {group}
-              </Link>
-            ))}
-          </nav>
-        </DashNav>
-      </DashboardNav>
-      <ViewWrapper>
-        <UsersList users={students} />
-      </ViewWrapper>
-    </DashboardWrapper>
+    <Wrapper>
+      <TitleWrapper>
+        <Title as="h2">Group {id}</Title>
+        <nav>
+          {groups.map((group) => (
+            <Link key={group} to={`/group/${group}`}>
+              {group}{' '}
+            </Link>
+          ))}
+        </nav>
+      </TitleWrapper>
+      <GroupWrapper>
+        <StudentsList />
+      </GroupWrapper>
+    </Wrapper>
   );
 };
 

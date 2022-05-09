@@ -15,6 +15,7 @@ export const SearchBarWrapper = styled.div`
     width: 100%;
     max-width: 350px;
     border: 2px solid ${({ theme }) => theme.colors.lightPurple};
+    z-index: 20;
   }
 `;
 
@@ -26,4 +27,10 @@ export const StatusInfo = styled.div`
   p {
     margin: 5px;
   }
+`;
+
+export const SearchFild = styled.div`
+  padding-top: 30px;
+  height: 100%;
+  z-index: 20;
 `;

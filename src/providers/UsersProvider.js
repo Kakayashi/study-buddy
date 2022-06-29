@@ -14,7 +14,6 @@ const UsersProvider = ({ children }) => {
     axios
       .get('/students')
       .then(({ data }) => setUsers(data.students))
-      //.then(({ data }) => console.log(data))
       .catch((err) => console.log(err));
   }, []);
 

@@ -7,13 +7,14 @@ import { GroupWrapper, TitleWrapper, Wrapper } from 'views/Dashboard.styles';
 import { Title } from 'components/atoms/Title/Title';
 import useModal from 'components/organisms/Modal/useModal';
 import StudentDetails from 'components/molecules/StudentDetails/StudentDetails';
+import Modal from 'components/organisms/Modal/Modal';
 
 const Dashboard = () => {
   const [groups, setGroups] = useState([]);
   const [currentStudent, setCurrentStudent] = useState([]);
   const { getGroups, getStudentById } = useStudents();
   const { id } = useParams();
-  const { Modal, isOpen, handleOpenModal, handleCloseModal } = useModal();
+  const { isOpen, handleOpenModal, handleCloseModal } = useModal();
 
   useEffect(() => {
     (async () => {
@@ -45,11 +46,9 @@ const Dashboard = () => {
       </TitleWrapper>
       <GroupWrapper>
         <StudentsList handleOpenStudentDetail={handleOpenStudentDetail} />
-        {isOpen ? (
-          <Modal handleClose={handleCloseModal}>
-            <StudentDetails students={currentStudent} />
-          </Modal>
-        ) : null}
+        <Modal isOpen={isOpen} handleClose={handleCloseModal}>
+          <StudentDetails student={currentStudent} />
+        </Modal>
       </GroupWrapper>
     </Wrapper>
   );

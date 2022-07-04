@@ -8,7 +8,7 @@ import {
   StyledLabel,
   StyledSubjectInfo,
   Wrapper,
-} from 'components/molecules/StudentDetails/StudentDetails.style';
+} from 'components/molecules/StudentDetails/StudentDetails.styles';
 
 const StudentDetails = ({ student }) => {
   return (

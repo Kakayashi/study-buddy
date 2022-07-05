@@ -4,15 +4,18 @@ import { theme } from 'assets/styles/theme';
 import { AuthProvider } from 'hooks/useAuth';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
+import { ErrorProvider } from 'hooks/useError';
 
 function AppProviders({ children }) {
   return (
     <Router>
       <ThemeProvider theme={theme}>
-        <AuthProvider>
-          <GlobalStyle />
-          {children}
-        </AuthProvider>
+        <ErrorProvider>
+          <AuthProvider>
+            <GlobalStyle />
+            {children}
+          </AuthProvider>
+        </ErrorProvider>
       </ThemeProvider>
     </Router>
   );

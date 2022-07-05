@@ -7,6 +7,8 @@ import { Button } from 'components/atoms/Button/Button';
 import { useForm } from 'react-hook-form';
 import { useAuth } from 'hooks/useAuth';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import ErrorMessage from 'components/molecules/ErrorMessage/ErrorMessage';
+import { useError } from 'hooks/useError';
 
 const AuthenticatedApp = () => {
   return (
@@ -27,7 +29,6 @@ const AuthenticatedApp = () => {
 
 const UnauthenticatedApp = () => {
   const auth = useAuth();
-
   const {
     register,
     handleSubmit,
@@ -40,9 +41,9 @@ const UnauthenticatedApp = () => {
       style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
     >
       <FormField label="login" name="login" id="login" {...register('login', { required: true })} />
-      {errors.login && <span>Login is required</span>}
+      {errors.login && <ErrorMessage></ErrorMessage>}
       <FormField label="password" name="password" id="password" type="password" {...register('password', { required: true })} />
-      {errors.password && <span>Password is required</span>}
+      {errors.password && <ErrorMessage></ErrorMessage>}
       <Button type="submit">Sign in</Button>
     </form>
   );
@@ -50,8 +51,14 @@ const UnauthenticatedApp = () => {
 
 const Root = () => {
   const auth = useAuth();
+  const { error } = useError();
 
-  return auth.user ? <AuthenticatedApp /> : <UnauthenticatedApp />;
+  return (
+    <>
+      {error ? <ErrorMessage message={error} /> : null}
+      {auth.user ? <AuthenticatedApp /> : <UnauthenticatedApp />}
+    </>
+  );
 };
 
 export default Root;

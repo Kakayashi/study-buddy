@@ -9,6 +9,7 @@ import { useAuth } from 'hooks/useAuth';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import ErrorMessage from 'components/molecules/ErrorMessage/ErrorMessage';
 import { useError } from 'hooks/useError';
+import Notes from './Notes';
 
 const AuthenticatedApp = () => {
   return (
@@ -20,6 +21,9 @@ const AuthenticatedApp = () => {
           </Route>
           <Route path="/group/:id?">
             <Dashboard />
+          </Route>
+          <Route path="/notes">
+            <Notes />
           </Route>
         </Switch>
       </Wrapper>

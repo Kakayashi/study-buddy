@@ -2,6 +2,8 @@ import React from 'react';
 import { Title } from 'components/atoms/Title/Title';
 import styled from 'styled-components';
 import DeleteButton from 'components/atoms/DeleteButton/DeleteButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeNote } from 'store';
 
 export const NoteWrapper = styled.div`
   display: flex;
@@ -20,12 +22,18 @@ const StyledDeleteButton = styled(DeleteButton)`
   left: -40px;
 `;
 
-function Note() {
+function Note({ title = 'Untilted', content = 'No content', id }) {
+  const dispatch = useDispatch();
+
+  const handleRemoveNote = () => {
+    dispatch(removeNote({ id: id }));
+  };
+
   return (
     <NoteWrapper>
-      <Title>Title</Title>
-      <p>LOrem ipsum LOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsum</p>
-      <StyledDeleteButton />
+      <Title>{title}</Title>
+      <p>{content}</p>
+      <StyledDeleteButton onClick={handleRemoveNote} />
     </NoteWrapper>
   );
 }

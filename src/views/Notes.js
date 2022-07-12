@@ -1,83 +1,48 @@
-import React from 'react';
-import styled from 'styled-components';
-import FormField from 'components/molecules/FormField/FormField';
+import React, { useState } from 'react';
 import { Button } from 'components/atoms/Button/Button';
-import { Title } from 'components/atoms/Title/Title';
-import DeleteButton from 'components/atoms/DeleteButton/DeleteButton';
+import { useDispatch, useSelector } from 'react-redux';
+import Note from 'components/molecules/Note/Note';
+import { addNote } from 'store';
+import { StyledFormField, Wrapper, FormWrapper, NotesWrapper } from './Notes.style';
+import ErrorMessage from 'components/molecules/ErrorMessage/ErrorMessage';
 
-export const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: 0.7fr 1.3fr;
-  grid-gap: 30px;
-  padding: 30px;
-`;
-
-export const FormWrapper = styled.div`
-  padding: 40px;
-  background: ${({ theme }) => theme.colors.white};
-  border-radius: 25px;
-  width: 100%;
-  height: 80%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`;
-
-export const StyledFormField = styled(FormField)`
-  height: ${({ isTextarea }) => (isTextarea ? '300px' : 'unset')};
-`;
-
-export const NotesWrapper = styled.div`
-  padding: 20px 60px;
-  display: flex;
-  flex-direction: column;
-`;
-
-export const NoteWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-
-  h3,
-  p {
-    margin: 0;
-    color: ${({ theme }) => theme.colors.darkGrey};
-  }
-`;
-const StyledDeleteButton = styled(DeleteButton)`
-  position: absolute;
-  top: 20px;
-  left: -40px;
-`;
+const initialFormState = {
+  title: '',
+  content: '',
+};
 
 function Notes() {
+  const notes = useSelector((state) => state.notes);
+  const [notesValue, setNotesValue] = useState(initialFormState);
+  const [trigger, setTrigger] = useState(false);
+  const dispatch = useDispatch();
+  const handleInputChange = (e) => {
+    const name = e.target.name;
+    setNotesValue({ ...notesValue, [name]: e.target.value });
+  };
+
+  const handleAddNote = () => {
+    console.log(notesValue);
+
+    notesValue.title !== '' ? dispatch(addNote({ title: notesValue.title, content: notesValue.content })) : setTrigger(true);
+  };
+
   return (
     <Wrapper>
+      {console.log(notes)}
       <FormWrapper>
-        <StyledFormField label="Notes" name="notes" id="notes" />
-        <StyledFormField isTextarea label="Content" name="Content" id="Content" />
-        <Button>Add</Button>
+        <StyledFormField value={notesValue.title} onChange={handleInputChange} label="Notes" name="title" id="title" />
+        <StyledFormField value={notesValue.content} onChange={handleInputChange} isTextarea label="Content" name="content" id="content" />
+        <Button onClick={handleAddNote}>Add</Button>
       </FormWrapper>
       <NotesWrapper>
-        <NoteWrapper>
-          <Title>Title</Title>
-          <p>LOrem ipsum LOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsum</p>
-          <StyledDeleteButton />
-        </NoteWrapper>
-        <NoteWrapper>
-          <Title>Title</Title>
-          <p>LOrem ipsum LOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsum</p>
-          <StyledDeleteButton />
-        </NoteWrapper>
-        <NoteWrapper>
-          <Title>Title</Title>
-          <p>LOrem ipsum LOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsumLOrem ipsum</p>
-          <StyledDeleteButton />
-        </NoteWrapper>
+        {notes.length ? (
+          notes.map(({ title, content, id }) => <Note id={id} key={id} title={title} content={content} />)
+        ) : (
+          <p>Create your first note</p>
+        )}
       </NotesWrapper>
+      {trigger ? <ErrorMessage message="Add title" /> : null}
     </Wrapper>
   );
 }
